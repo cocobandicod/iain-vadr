@@ -14,60 +14,60 @@ export default [
     path: '/',
     name: 'home',
     component: Home,
-    meta: { title: 'Home | Paluwala LPPM Universitas Negeri Gorontalo' }
+    meta: { title: 'Home | VADR IAIN Sultan Amai Gorontalo' }
   },
   {
     path: '/panduan',
     name: 'panduan',
     component: Panduan,
-    meta: { title: 'Panduan | Paluwala LPPM Universitas Negeri Gorontalo' }
+    meta: { title: 'Panduan | VADR IAIN Sultan Amai Gorontalo' }
   },
   {
     path: '/pengumuman',
     name: 'pengumuman',
     component: Pengumuman,
-    meta: { title: 'Pengumuman | Paluwala LPPM Universitas Negeri Gorontalo' }
+    meta: { title: 'Pengumuman | VADR IAIN Sultan Amai Gorontalo' }
   },
   {
     path: '/lowongan-penelitian',
     name: 'LowonganPenelitian',
     component: LowonganPenelitian,
-    meta: { title: 'Lowongan Penelitian | Paluwala LPPM Universitas Negeri Gorontalo' }
+    meta: { title: 'Lowongan Penelitian | VADR IAIN Sultan Amai Gorontalo' }
   },
   {
     path: '/lowongan-pengabdian',
     name: 'LowonganPengabdian',
     component: LowonganPengabdian,
-    meta: { title: 'Lowongan Pengabdian | Paluwala LPPM Universitas Negeri Gorontalo' }
+    meta: { title: 'Lowongan Pengabdian | VADR IAIN Sultan Amai Gorontalo' }
   },
   {
     path: '/berita',
     name: 'berita',
     component: Berita,
-    meta: { title: 'Berita | Paluwala LPPM Universitas Negeri Gorontalo' }
+    meta: { title: 'Berita | VADR IAIN Sultan Amai Gorontalo' }
   },
   {
     path: '/berita/:slug',
     name: 'BeritaDetail',
     component: BeritaDetail,
-    meta: { title: 'Berita | Paluwala LPPM Universitas Negeri Gorontalo' }
+    meta: { title: 'Berita | VADR IAIN Sultan Amai Gorontalo' }
   },
   {
     path: '/login',
     name: 'Login',
     component: Login,
-    meta: { title: 'Login | Paluwala LPPM Universitas Negeri Gorontalo' }
+    meta: { title: 'Login | VADR IAIN Sultan Amai Gorontalo' }
   },
   {
     path: '/register',
     name: 'Register',
     component: Register,
-    meta: { title: 'Register | Paluwala LPPM Universitas Negeri Gorontalo' }
+    meta: { title: 'Register | VADR IAIN Sultan Amai Gorontalo' }
   },
   {
     path: '/logout',
     name: 'Logout',
     component: Logout,
-    meta: { title: 'Logout | Paluwala LPPM Universitas Negeri Gorontalo' }
+    meta: { title: 'Logout | VADR IAIN Sultan Amai Gorontalo' }
   },
 ];
