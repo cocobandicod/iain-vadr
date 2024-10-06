@@ -1,49 +1,151 @@
 <script setup>
+import { ref } from 'vue';
+import api from '../api';
 import GlobalFooter from '../components/footer.vue';
+import { showToast, confirmAkses, showAlert } from '../utils/globalFunctions';
+
+const username = ref('');
+const no_hp = ref('');
+const akses = ref('');
+const btnloading = ref(false);
+
+const verifikasi = async () => {
+  try {
+    btnloading.value = true; // Indikator loading diaktifkan
+
+    try {
+      // Langkah 1: Cek user apakah sudah terdaftar
+      const cekuser = await api.get(`/api/cekuser/${username.value}`);
+
+      if (cekuser.data) {
+        // Jika user ditemukan, tampilkan alert
+        showAlert(
+          'Perhatian!',
+          `Pengguna ${username.value} ini telah terdaftar`
+        );
+        btnloading.value = false; // Stop loading
+        return; // Tidak lanjut ke pengecekan data mahasiswa
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        // Jika user tidak ditemukan, lanjutkan ke pengecekan mahasiswa
+        try {
+          const response = await api.get(
+            `/api/cek/${username.value}/${no_hp.value}`
+          );
+          if (response.data) {
+            // Jika data mahasiswa ditemukan, lakukan registrasi
+            const result = await confirmAkses(
+              'info',
+              'Perhatian!',
+              `Username dan Password akan dikirimkan di nomor ${no_hp.value}`
+            );
+            if (result.isConfirmed) {
+              try {
+                let formData = new FormData();
+                formData.append('username', response.data.data.nim); // Misalnya nim digunakan sebagai username
+                formData.append('no_hp', no_hp.value);
+                formData.append('akses', akses.value);
+
+                await api.post(`/api/register`, formData); // Lakukan registrasi akun
+                // Tampilkan toast sukses
+                showToast('Registrasi Berhasil', '#4fbe87');
+              } catch (error) {
+                console.error('Error delete data:', error);
+                // Tampilkan toast error jika gagal menghapus
+                showToast('Gagal Registrasi', '#ff6b6b');
+              }
+            }
+          } else {
+            // Jika data mahasiswa tidak ditemukan
+            showAlert('Perhatian!', 'Data tidak ditemukan', 'warning');
+          }
+        } catch (error) {
+          console.error('Error fetching mahasiswa data:', error);
+          showAlert(
+            'Perhatian!',
+            'Terjadi kesalahan saat pengecekan mahasiswa',
+            'warning'
+          );
+        }
+      } else {
+        console.error('Error fetching user data:', error);
+        showAlert(
+          'Perhatian!',
+          'Terjadi kesalahan saat pengecekan user',
+          'warning'
+        );
+      }
+    }
+  } catch (error) {
+    console.error('Error during verification process:', error);
+    showAlert('Perhatian!', 'Terjadi kesalahan, silakan coba lagi.', 'warning');
+  } finally {
+    btnloading.value = false; // Indikator loading dinonaktifkan
+  }
+};
 </script>
 <template>
   <!-- start hero section -->
   <section class="section job-hero-section bg-light pb-0" id="hero">
     <div class="container">
       <div class="row justify-content-between align-items-center">
-        <div class="col-lg-5">
+        <div class="col-lg-6">
           <div>
             <img src="/src/assets/images/iain.png" alt="" class="user-img" />
             <h1 class="display-6 fw-semibold text-capitalize mb-3 lh-base">
               Virtual Assistant Dwingent Recht
             </h1>
             <p class="lead lh-base mb-4"><b>IAIN Sultan Amai Gorontalo</b></p>
-            <form action="#" class="job-panel-filter">
+            <form @submit.prevent="verifikasi" class="job-panel-filter">
               <div class="row g-md-0 g-2">
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <div>
                     <input
-                      type="number"
-                      id="job-title"
+                      type="text"
+                      v-model="username"
                       class="form-control filter-input-box"
-                      placeholder="NIM/NIDN"
+                      placeholder="NIM"
                       required />
                   </div>
                 </div>
                 <!--end col-->
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <div>
                     <input
                       type="text"
-                      id="job-title"
+                      v-model="no_hp"
                       class="form-control filter-input-box"
-                      placeholder="Nomor WA Terdaftar"
+                      placeholder="Nomor WA 0852..."
                       required />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div>
+                    <select
+                      v-model="akses"
+                      class="form-control text-muted"
+                      data-choices
+                      required>
+                      <option value="" selected>Pilih Akses --</option>
+                      <option value="Mahasiswa">Mahasiswa</option>
+                    </select>
                   </div>
                 </div>
                 <!--end col-->
                 <div class="col-md-12">
                   <div class="h-100">
                     <button
-                      class="btn btn-success submit-btn w-100 h-100"
-                      type="submit">
-                      <i class="ri-search-2-line align-bottom me-1"></i>
-                      Verifikasi Akun Sekarang
+                      type="submit"
+                      class="btn btn-success submit-btn w-100 h-100">
+                      <span v-if="btnloading">
+                        <i class="mdi mdi-spin mdi-loading"></i>
+                        Loading...
+                      </span>
+                      <span v-else>
+                        <i class="ri-search-2-line align-bottom me-1"></i>
+                        Verifikasi Akun Sekarang
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -66,7 +168,7 @@ import GlobalFooter from '../components/footer.vue';
           </div>
         </div>
         <!--end col-->
-        <div class="col-lg-7">
+        <div class="col-lg-6">
           <div class="position-relative home-img text-center mt-5 mt-lg-0">
             <img
               src="/src/assets/images/job-profile2.png"

@@ -29,12 +29,16 @@ const login = async () => {
     localStorage.setItem('nama_pengguna', nama_pengguna);
 
     // Alihkan pengguna berdasarkan hak_akses mereka
-    if (hak_akses === 'Pengusul') {
-      router.push('/pengusul/dashboard').then(() => {
+    if (hak_akses === 'Mahasiswa') {
+      router.push('/mahasiswa/dashboard').then(() => {
         window.location.reload();
       });
-    } else if (hak_akses === 'Reviewer') {
-      router.push('/reviewer/dashboard').then(() => {
+    } else if (hak_akses === 'Dosen') {
+      router.push('/dosen/dashboard').then(() => {
+        window.location.reload();
+      });
+    } else if (hak_akses === 'Pegawai') {
+      router.push('/pegawai/dashboard').then(() => {
         window.location.reload();
       });
     } else if (hak_akses === 'Operator') {
@@ -65,7 +69,7 @@ const login = async () => {
               <div class="row g-0">
                 <div class="col-lg-6">
                   <div class="p-lg-5 p-4 auth-one-bg h-100">
-                    <div class="bg-overlay"></div>
+                    <div class=""></div>
                     <div class="position-relative h-100 d-flex flex-column">
                       <div class="mb-4">
                         <a href="index-2.html" class="d-block">
@@ -111,11 +115,7 @@ const login = async () => {
 
                         <div class="mb-3">
                           <div class="float-end">
-                            <a
-                              href="auth-pass-reset-cover.html"
-                              class="text-muted"
-                              >Lupa Password?</a
-                            >
+                            <a href="#" class="text-muted">Lupa Password?</a>
                           </div>
                           <label class="form-label" for="password-input"
                             >Password</label

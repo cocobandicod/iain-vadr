@@ -12,8 +12,11 @@ class User extends Model
 {
     use HasApiTokens, Notifiable;
 
+    protected $table = 'users'; // Specify the table name for the model
+
+    protected $primaryKey = 'id'; // Specify the primary key column name
+
     protected $fillable = [
-        'name',
         'username',
         'email',
         'password',

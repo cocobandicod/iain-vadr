@@ -1,12 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import homeRoutes from './home';
-import pengusulRoutes from './pengusul';
+import mahasiswaRoutes from './mahasiswa';
+import dosenRoutes from './dosen';
+import pegawaiRoutes from './pegawai';
 import operatorRoutes from './operator';
 import NotFound from '../components/NotFound.vue';
 
 const routes = [
   ...homeRoutes,
-  ...pengusulRoutes,
+  ...mahasiswaRoutes,
+  ...dosenRoutes,
+  ...pegawaiRoutes,
   ...operatorRoutes,
   {
     path: '/:pathMatch(.*)*', // Catch-all untuk rute yang tidak cocok
@@ -24,22 +28,33 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  const hakAkses = localStorage.getItem('hak_akses'); // Ambil hak akses dari localStorage
+  
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    const token = localStorage.getItem('token');
+    // Cek apakah pengguna sudah login (memiliki token)
     if (!token) {
       next({ path: '/login' });
-    } else {
-      next();
+      return;  // Pastikan menggunakan return setelah next() di dalam fungsi
     }
-  } else {
-    next();
+
+    // Cek apakah pengguna berhak mengakses halaman berdasarkan hak akses
+    const allowedRoles = to.meta.allowedRoles;
+    if (allowedRoles && !allowedRoles.includes(hakAkses)) {
+      //alert('Anda tidak berhak mengakses halaman ini!');
+      next({ path: '/404' }); // Redirect ke halaman akses ditolak
+      return;  // Pastikan menggunakan return setelah next() di dalam fungsi
+    }
   }
+
+  // Set judul halaman jika tersedia di meta
   if (to.meta && to.meta.title) {
     document.title = to.meta.title;
   } else {
-    // Title default jika meta title tidak tersedia
-    document.title = 'Default Title';
+    document.title = 'Default Title'; // Default title jika meta title tidak tersedia
   }
+
+  next(); // Lanjutkan navigasi jika semua pengecekan lolos
 });
 
 export default router;

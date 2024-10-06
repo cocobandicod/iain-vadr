@@ -4,12 +4,13 @@ import api from '../../api';
 import 'datatables.net-bs5';
 import $ from 'jquery';
 import { showToast, confirmDelete } from '../../utils/globalFunctions';
-//import FormBuatGroup './form/form_buat_group.vue';
-//import FormSkemaEdit from './form/form_skema_edit.vue';
+import FormBuatGroup from './form/form_buat_group.vue';
+import FormTambahMember from './form/form_tambah_member.vue';
 
 const isLoading = ref(true);
 const member = ref([]);
 const group = ref([]);
+const groupData = ref([]);
 const pilgroup = ref(null);
 const kategori = 'Lainnya';
 // Function to fetch data based on selected category and year
@@ -22,9 +23,12 @@ const detail_group = async () => {
     // Re-initialize DataTable after data is loaded
     initializeDataTable();
     isLoading.value = true; // Set loading to true before fetching
-    const response = await api.get(`/api/membergroup/${pilgroup.value}`);
+    const response = await api.get(
+      `/api/membergroup/${pilgroup.value}/${kategori}`
+    );
     member.value = response.data.data.member;
     group.value = response.data.data.group;
+    groupData.value = response.data.data.group;
   } catch (error) {
     console.error('Error fetching data:', error);
   } finally {
@@ -68,7 +72,6 @@ const initializeDataTable = () => {
 
 // Combined function for handling both category and year changes
 const pilih_group = async () => {
-  alert(kategori);
   await detail_group(); // Fetch data based on new selections
   initializeDataTable();
 };
@@ -127,7 +130,7 @@ const hapus_data = async (id, nama) => {
                           type="button"
                           class="btn btn-success mb-2 me-1"
                           data-bs-toggle="modal"
-                          data-bs-target="#FormGroupLainnya">
+                          data-bs-target="#FormBuatGroup">
                           <i class="ri-add-circle-line align-bottom me-1"></i>
                           Buat Group
                         </button>
@@ -135,7 +138,7 @@ const hapus_data = async (id, nama) => {
                           type="button"
                           class="btn btn-success mb-2 me-1"
                           data-bs-toggle="modal"
-                          data-bs-target="#FormSkemaAdd">
+                          data-bs-target="#FormTambahMember">
                           <i class="ri-user-add-line align-bottom me-1"></i>
                           Tambah Member
                         </button>
@@ -238,7 +241,7 @@ const hapus_data = async (id, nama) => {
                                         ">
                                         <i
                                           class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
-                                        Hapus
+                                        Hapus Member
                                       </button>
                                     </li>
                                   </ul>
@@ -264,5 +267,9 @@ const hapus_data = async (id, nama) => {
     </div>
   </div>
   <FormBuatGroup :dataKet="kategori" @refresh="refreshDataTable" />
+  <FormTambahMember
+    :dataKet="kategori"
+    :groupData="groupData"
+    @refresh="refreshDataTable" />
 </template>
 <style lang=""></style>

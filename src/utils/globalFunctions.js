@@ -79,9 +79,23 @@ export const showAlert = (title, text, icon = 'info', confirmButtonText = 'OK') 
       title: title,
       text: text,
       icon: icon,
+      confirmButtonColor: '#f06548',
       confirmButtonText: confirmButtonText,
     });
 };
+
+export const confirmAkses = async (icon = 'info', title = 'Apakah kamu yakin?', text = 'Data ini akan dihapus!') => {
+    return Swal.fire({
+      title: title,
+      text: text,
+      icon: icon,
+      showCancelButton: true,
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#405189',
+      confirmButtonText: 'Kirim',
+      cancelButtonText: 'Batal',
+    });
+  };
 
 export const confirmDelete = async (title = 'Apakah kamu yakin?', text = 'Data ini akan dihapus!') => {
     return Swal.fire({
