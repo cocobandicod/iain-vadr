@@ -61,7 +61,7 @@ export function getEmbedUrl(url){
     return `https://www.youtube.com/embed/${videoId}`;
 }
 
-export function showToast(message, backgroundColor = "#4fbe87", duration = 3000, position = "right", gravity = "top") {
+export function showToast(message, backgroundColor = "#4fbe87", duration = 3000, position = "center", gravity = "top") {
     Toastify({
         text: message,
         duration: duration,

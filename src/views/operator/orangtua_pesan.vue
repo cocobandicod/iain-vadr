@@ -3,16 +3,16 @@ import { ref, onMounted } from 'vue';
 import api from '../../api';
 import 'datatables.net-bs5';
 import $ from 'jquery';
-import { showToast, confirmDelete } from '../../utils/globalFunctions';
-import FormAdd from './form/form_lainnya_add.vue';
-import FormEdit from './form/form_lainnya_edit.vue';
+import FormKirimPesan from './form/form_kirim_pesan.vue';
 
 const isLoading = ref(true);
-const lainnya = ref([]);
-const selectedId = ref(0);
+const mahasiswa = ref([]);
+const selectedNama = ref('');
+const selectedNomor = ref('');
 
-const edit_data = (id) => {
-  selectedId.value = id;
+const edit_data = (nama, nomor) => {
+  selectedNama.value = nama;
+  selectedNomor.value = nomor;
 };
 
 const detail_ = async () => {
@@ -23,8 +23,8 @@ const detail_ = async () => {
     // Re-initialize DataTable after data is loaded
     initializeDataTable();
     isLoading.value = true; // Set loading to true before fetching
-    const response = await api.get('/api/lainnya');
-    lainnya.value = response.data.data;
+    const response = await api.get('/api/mahasiswa');
+    mahasiswa.value = response.data.data;
   } catch (error) {
     console.error('Error fetching data:', error);
   } finally {
@@ -53,11 +53,11 @@ const initializeDataTable = () => {
       {
         className: 'text-center p-2',
         width: '3%',
-        targets: [0, 3],
+        targets: [0, 6],
       },
       {
         className: 'p-2',
-        targets: [0, 1, 2, 3],
+        targets: [0, 1, 2, 3, 4, 5, 6],
       },
     ],
     language: {
@@ -74,27 +74,6 @@ const initializeDataTable = () => {
     },
   });
 };
-
-const hapus_data = async (id, nama) => {
-  // Tampilkan dialog konfirmasi menggunakan SweetAlert
-  const result = await confirmDelete('Menghapus data ini?', nama);
-
-  // Jika pengguna mengonfirmasi penghapusan
-  if (result.isConfirmed) {
-    try {
-      // Hapus dari database
-      await api.delete(`/api/lainnya/${id}`);
-      await detail_(); // Refresh data setelah penghapusan
-      initializeDataTable();
-      // Tampilkan toast sukses
-      showToast('Data berhasil dihapus', '#4fbe87');
-    } catch (error) {
-      console.error('Error delete data:', error);
-      // Tampilkan toast error jika gagal menghapus
-      showToast('Gagal menghapus data', '#ff6b6b');
-    }
-  }
-};
 </script>
 <template>
   <div>
@@ -105,20 +84,12 @@ const hapus_data = async (id, nama) => {
             <div class="col-xl-12">
               <div class="card card-height-100">
                 <div class="card-header align-items-center d-flex">
-                  <h4 class="card-title mb-0 flex-grow-1">Lainnya</h4>
+                  <h4 class="card-title mb-0 flex-grow-1">
+                    Pesan Baru Orang Tua Mahasiswa
+                  </h4>
                 </div>
                 <!-- end card header -->
                 <div class="card-body">
-                  <div>
-                    <button
-                      type="button"
-                      class="btn btn-success mb-2"
-                      data-bs-toggle="modal"
-                      data-bs-target="#FormAdd">
-                      <i class="ri-add-circle-line align-bottom me-1"></i>
-                      Data
-                    </button>
-                  </div>
                   <div
                     v-if="isLoading"
                     class="d-flex justify-content-center mt-4 mb-4">
@@ -134,18 +105,26 @@ const hapus_data = async (id, nama) => {
                       <thead class="table-light">
                         <tr>
                           <th>No</th>
-                          <th>Nama</th>
-                          <th>Nomor HP</th>
+                          <th>NIM</th>
+                          <th>Nama Mahasiswa</th>
+                          <th>No. HP Orang Tua</th>
+                          <th>Fakultas</th>
+                          <th>Program Studi</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="(item, index) in lainnya" :key="index">
+                        <tr v-for="(item, index) in mahasiswa" :key="index">
                           <td>{{ index + 1 }}</td>
                           <td>
-                            {{ item.nama_lainnya }}
+                            {{ item.nim }}
                           </td>
-                          <td>{{ item.no_hp }}</td>
+                          <td>
+                            {{ item.nama_mahasiswa }}
+                          </td>
+                          <td>{{ item.no_hp_orangtua }}</td>
+                          <td>{{ item.nama_fakultas }}</td>
+                          <td>{{ item.nama_jurusan }}</td>
                           <td>
                             <div class="dropdown">
                               <span
@@ -162,22 +141,16 @@ const hapus_data = async (id, nama) => {
                                   <button
                                     class="dropdown-item"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#FormEdit"
-                                    @click="edit_data(item.id)">
-                                    <i
-                                      class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                                    Ubah
-                                  </button>
-                                </li>
-                                <li>
-                                  <button
-                                    class="dropdown-item"
-                                    @click.prevent="
-                                      hapus_data(item.id, item.nama_lainnya)
+                                    data-bs-target="#FormKirimPesan"
+                                    @click="
+                                      edit_data(
+                                        item.nama_mahasiswa,
+                                        item.no_hp_orangtua
+                                      )
                                     ">
                                     <i
-                                      class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
-                                    Hapus
+                                      class="ri-mail-send-line align-bottom me-2 text-muted"></i>
+                                    Kirim Pesan
                                   </button>
                                 </li>
                               </ul>
@@ -200,7 +173,6 @@ const hapus_data = async (id, nama) => {
       </div>
     </div>
   </div>
-  <FormAdd @refreshTabel="refreshDataTable" />
-  <FormEdit :dataId="selectedId" @refreshTabel="refreshDataTable" />
+  <FormKirimPesan :selectedNama="selectedNama" :selectedNomor="selectedNomor" />
 </template>
 <style lang=""></style>

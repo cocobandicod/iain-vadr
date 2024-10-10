@@ -23,6 +23,14 @@
                   <div class="row align-items-end">
                     <div class="col-sm-8">
                       <div class="p-3">
+                        <img
+                          src="/src/assets/images/iain.png"
+                          alt=""
+                          class="user-img" />
+                        <h1
+                          class="display-6 fw-semibold text-capitalize mb-3 lh-base">
+                          Virtual Assistant Dwingent Recht
+                        </h1>
                         <p class="fs-24 lh-base">IAIN Sultan Amai Gorontalo</p>
                       </div>
                     </div>

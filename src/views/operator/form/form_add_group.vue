@@ -24,12 +24,12 @@ const add_group = async () => {
   formData.append('nama_group', group.value.nama_group);
   formData.append('kategori', props.dataKet);
   try {
-    await api.post(`/api/buatgroup`, formData);
+    await api.post(`/api/addgroup`, formData);
     showToast('Data berhasil disimpan', '#4fbe87');
     emit('refresh');
     clearFormInput();
     // Close modal (optional)
-    const modalElement = document.getElementById('FormBuatGroup');
+    const modalElement = document.getElementById('FormAddGroup');
     const modalInstance = bootstrap.Modal.getInstance(modalElement);
     if (modalInstance) {
       modalInstance.hide();
@@ -53,7 +53,7 @@ const clearFormInput = () => {
   <div
     class="modal fade zoomIn"
     data-bs-backdrop="static"
-    id="FormBuatGroup"
+    id="FormAddGroup"
     tabindex="-1"
     aria-labelledby="exampleModalLabel"
     aria-hidden="true"

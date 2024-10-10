@@ -5,21 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class GroupPesan extends Model
+class Jurusan extends Model
 {
     use HasFactory;
 
-    protected $table = 'group_pesan'; // Specify the table name for the model
+    protected $table = 'prodi'; // Specify the table name for the model
 
     protected $primaryKey = 'id'; // Specify the primary key column name
 
     protected $fillable = [
-        'kode',
-        'nama_group',
-        'kategori',
+        'id',
+        'id_jurusan',
+        'nama_jurusan',
     ];
 
     protected $hidden = [
+        'created_at',
         'updated_at'
     ];
 }

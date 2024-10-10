@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 //import Model "Post"
-use App\Models\KelompokRab;
+use App\Models\Mahasiswa;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -20,15 +20,35 @@ use Illuminate\Support\Facades\Validator;
 //import Facade "Str"
 use Illuminate\Support\Str;
 
-class KelompokRabOperatorController extends Controller
+class MahasiswaController extends Controller
 {
 
     public function index()
     {
-        //get all posts with user relationship loaded
-        $rab = KelompokRab::latest()->get();
+        $post = Mahasiswa::leftJoin('fakultas', 'mahasiswa.id_fakultas', '=', 'fakultas.id')
+            ->leftJoin('prodi', 'mahasiswa.id_prodi', '=', 'prodi.id')
+            ->select(
+                'mahasiswa.id',
+                'mahasiswa.nim',
+                'mahasiswa.nama_mahasiswa',
+                'mahasiswa.no_hp',
+                'mahasiswa.no_hp_orangtua',
+                'fakultas.nama_fakultas',
+                'prodi.nama_jurusan'
+            )
+            ->groupBy(
+                'mahasiswa.id',
+                'mahasiswa.nim',
+                'mahasiswa.nama_mahasiswa',
+                'mahasiswa.no_hp',
+                'mahasiswa.no_hp_orangtua',
+                'fakultas.nama_fakultas',
+                'prodi.nama_jurusan'
+            )
+            ->get();
+
         //return collection of posts as a resource
-        return new PostResource(true, 'List Data', $rab);
+        return new PostResource(true, 'List Data', $post);
     }
 
     public function store(Request $request)
@@ -44,7 +64,7 @@ class KelompokRabOperatorController extends Controller
         }
 
         //create Rab
-        $rab = KelompokRab::create([
+        $rab = Mahasiswa::create([
             'kelompok_rab' => $request->kelompok_rab,
         ]);
 
@@ -55,7 +75,7 @@ class KelompokRabOperatorController extends Controller
     public function show($id)
     {
         //find post by ID
-        $rab = KelompokRab::find($id);
+        $rab = Mahasiswa::find($id);
 
         if (!$rab) {
             return response()->json([
@@ -79,7 +99,7 @@ class KelompokRabOperatorController extends Controller
             return response()->json($validator->errors(), 422);
         }
         // Find post by ID
-        $rab = KelompokRab::find($id);
+        $rab = Mahasiswa::find($id);
 
         $rab->update([
             'kelompok_rab' => $request->kelompok_rab,
@@ -93,7 +113,7 @@ class KelompokRabOperatorController extends Controller
     {
 
         //find post by ID
-        $berita = KelompokRab::find($id);
+        $berita = Mahasiswa::find($id);
 
         //delete post
         $berita->delete();

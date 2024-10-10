@@ -1,30 +1,50 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import api from '../../api';
 import 'datatables.net-bs5';
 import $ from 'jquery';
-import { showToast, confirmDelete } from '../../utils/globalFunctions';
-//import FormBuatGroup './form/form_buat_group.vue';
-//import FormSkemaEdit from './form/form_skema_edit.vue';
+import {
+  showToast,
+  confirmDelete,
+  formatTanggal,
+} from '../../utils/globalFunctions';
+import FormAddMember from './form/form_add_member.vue';
+import FormKirimBroadcast from './form/form_kirim_broadcast.vue';
+import FormKirimPesan from './form/form_kirim_pesan.vue';
 
+const route = useRoute();
 const isLoading = ref(true);
-const member = ref([]);
 const group = ref([]);
-const pilgroup = ref(null);
+const member = ref([]);
+const dataGroup = ref([]);
 const kategori = 'Lainnya';
-// Function to fetch data based on selected category and year
+const dataID = ref(null);
+
+const jumMember = ref(0);
+const namaGroup = ref('');
+
+const selectedNama = ref('');
+const selectedNomor = ref('');
+const edit_data = (nama, nomor) => {
+  selectedNama.value = nama;
+  selectedNomor.value = nomor;
+};
+
 const detail_group = async () => {
   try {
-    // Check if DataTable is already initialized, destroy it if exists
-    if ($.fn.DataTable.isDataTable('#DTable')) {
-      $('#DTable').DataTable().destroy();
-    }
-    // Re-initialize DataTable after data is loaded
     initializeDataTable();
     isLoading.value = true; // Set loading to true before fetching
-    const response = await api.get(`/api/membergroup/${pilgroup.value}`);
+    const response = await api.get(
+      `/api/group/${kategori}/${route.params.kode}`
+    );
     member.value = response.data.data.member;
     group.value = response.data.data.group;
+    dataID.value = group.value.id;
+    jumMember.value = response.data.data.jum;
+    namaGroup.value = group.value.nama_group;
+
+    // Initialize DataTable after data is loaded
   } catch (error) {
     console.error('Error fetching data:', error);
   } finally {
@@ -34,6 +54,9 @@ const detail_group = async () => {
 
 // Function to initialize DataTable
 const initializeDataTable = () => {
+  if ($.fn.DataTable.isDataTable('#DTable')) {
+    $('#DTable').DataTable().clear().destroy();
+  }
   $('#DTable').DataTable({
     stateSave: true,
     autoWidth: true,
@@ -44,11 +67,11 @@ const initializeDataTable = () => {
       {
         className: 'text-center p-2',
         width: '3%',
-        targets: [0, 4],
+        targets: [0, 5],
       },
       {
         className: 'p-2',
-        targets: [0, 1, 2, 3, 4],
+        targets: [0, 1, 2, 3, 4, 5],
       },
     ],
     language: {
@@ -66,22 +89,23 @@ const initializeDataTable = () => {
   });
 };
 
-// Combined function for handling both category and year changes
-const pilih_group = async () => {
-  alert(kategori);
-  await detail_group(); // Fetch data based on new selections
-  initializeDataTable();
-};
-
 // Fetch initial data when component is mounted
 onMounted(async () => {
   await detail_group();
-  initializeDataTable(); // Initialize the data table after fetching
+  initializeDataTable();
 });
 
+// Refresh DataTable after adding a member
 const refreshDataTable = async () => {
   await detail_group();
   initializeDataTable();
+};
+
+const resetModalData = () => {
+  // Reset checked status for all items in dataGroup
+  dataGroup.value.forEach((item) => {
+    item.checked = false; // Reset checkbox status
+  });
 };
 
 const hapus_data = async (id, nama) => {
@@ -92,18 +116,24 @@ const hapus_data = async (id, nama) => {
   if (result.isConfirmed) {
     try {
       // Hapus dari database
-      await api.delete(`/api/skemaform/${id}`);
-      await detail_skema(); // Refresh data setelah penghapusan
-      initializeDataTable();
-      // Tampilkan toast sukses
+      await api.delete(`/api/hapusmember/${id}`);
       showToast('Data berhasil dihapus', '#4fbe87');
+      await detail_group(); // Refresh data setelah penghapusan
+      initializeDataTable();
     } catch (error) {
       console.error('Error delete data:', error);
-      // Tampilkan toast error jika gagal menghapus
       showToast('Gagal menghapus data', '#ff6b6b');
     }
   }
 };
+
+// Listen for the modal open event
+onMounted(() => {
+  const modalElement = document.getElementById('FormAddMember');
+  if (modalElement) {
+    modalElement.addEventListener('show.bs.modal', resetModalData);
+  }
+});
 </script>
 <template>
   <div>
@@ -115,7 +145,7 @@ const hapus_data = async (id, nama) => {
               <div class="card card-height-100">
                 <div class="card-header align-items-center d-flex">
                   <h4 class="card-title mb-0 flex-grow-1">
-                    Kirim Pesan Group Lainnya
+                    Kirim Pesan Group Lainnya ({{ namaGroup }})
                   </h4>
                 </div>
                 <!-- end card header -->
@@ -127,47 +157,26 @@ const hapus_data = async (id, nama) => {
                           type="button"
                           class="btn btn-success mb-2 me-1"
                           data-bs-toggle="modal"
-                          data-bs-target="#FormGroupLainnya">
-                          <i class="ri-add-circle-line align-bottom me-1"></i>
-                          Buat Group
-                        </button>
-                        <button
-                          type="button"
-                          class="btn btn-success mb-2 me-1"
-                          data-bs-toggle="modal"
-                          data-bs-target="#FormSkemaAdd">
+                          data-bs-target="#FormAddMember">
                           <i class="ri-user-add-line align-bottom me-1"></i>
                           Tambah Member
                         </button>
                         <button
                           type="button"
-                          class="btn btn-success mb-2"
+                          class="btn btn-success mb-2 me-1"
                           data-bs-toggle="modal"
-                          data-bs-target="#FormSkemaAdd">
-                          <i class="ri-mail-send-line align-bottom me-1"></i>
-                          Kirim Pesan
+                          data-bs-target="#FormAddMember">
+                          <i class="ri-file-upload-line align-bottom me-1"></i>
+                          Upload Excel
                         </button>
-                      </div>
-                    </div>
-                    <div class="col-sm">
-                      <div class="d-flex justify-content-sm-end">
-                        <div class="search-box ms-0">
-                          <label for="labelInput" class="form-label"
-                            >Nama Group</label
-                          >
-                          <select
-                            v-model="pilgroup"
-                            class="form-select"
-                            @change.prevent="pilih_group()">
-                            <option value="null">Pilih --</option>
-                            <option
-                              v-for="(item, index) in group"
-                              :key="index"
-                              :value="item.id">
-                              {{ item.nama_group }}
-                            </option>
-                          </select>
-                        </div>
+                        <button
+                          type="button"
+                          class="btn btn-success mb-2 me-1"
+                          data-bs-toggle="modal"
+                          data-bs-target="#FormKirimBroadcast">
+                          <i class="ri-mail-send-line align-bottom me-1"></i>
+                          Kirim Broadcast
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -189,8 +198,9 @@ const hapus_data = async (id, nama) => {
                             <tr>
                               <th>No</th>
                               <th>Nama</th>
-                              <th>No Handphone</th>
-                              <th>Nama Group</th>
+                              <th>Nomor HP</th>
+                              <th>Group</th>
+                              <th>Create</th>
                               <th>Action</th>
                             </tr>
                           </thead>
@@ -202,11 +212,10 @@ const hapus_data = async (id, nama) => {
                               <td>
                                 {{ item.nama }}
                               </td>
+                              <td>{{ item.no_hp }}</td>
+                              <td>{{ group.nama_group }}</td>
                               <td>
-                                {{ item.no_hp }}
-                              </td>
-                              <td>
-                                {{ item.nama_group }}
+                                {{ formatTanggal(item.created_at) }}
                               </td>
                               <td>
                                 <div class="dropdown">
@@ -224,7 +233,10 @@ const hapus_data = async (id, nama) => {
                                       <button
                                         class="dropdown-item"
                                         data-bs-toggle="modal"
-                                        data-bs-target="#FormSkemaEdit">
+                                        data-bs-target="#FormKirimPesan"
+                                        @click="
+                                          edit_data(item.nama, item.no_hp)
+                                        ">
                                         <i
                                           class="ri-mail-send-line align-bottom me-2 text-muted"></i>
                                         Kirim Pesan
@@ -234,7 +246,7 @@ const hapus_data = async (id, nama) => {
                                       <button
                                         class="dropdown-item"
                                         @click.prevent="
-                                          hapus_data(item.id, item.judul)
+                                          hapus_data(item.id, item.nama)
                                         ">
                                         <i
                                           class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
@@ -263,6 +275,15 @@ const hapus_data = async (id, nama) => {
       </div>
     </div>
   </div>
-  <FormBuatGroup :dataKet="kategori" @refresh="refreshDataTable" />
+  <FormAddMember
+    :dataKet="kategori"
+    :dataID="dataID || 0"
+    @refresh="refreshDataTable" />
+  <FormKirimBroadcast
+    :dataKet="kategori"
+    :dataID="dataID || 0"
+    :namaGroup="namaGroup"
+    :jumMember="jumMember" />
+  <FormKirimPesan :selectedNama="selectedNama" :selectedNomor="selectedNomor" />
 </template>
 <style lang=""></style>

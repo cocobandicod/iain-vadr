@@ -40,7 +40,7 @@ import GlobalHeader from '../components/operator_header.vue';
                   <li class="nav-item">
                     <router-link
                       :to="{
-                        name: 'OperatorDashboard',
+                        name: 'OperatorMasterDosen',
                       }"
                       class="nav-link">
                       Dosen
@@ -49,7 +49,7 @@ import GlobalHeader from '../components/operator_header.vue';
                   <li class="nav-item">
                     <router-link
                       :to="{
-                        name: 'OperatorDashboard',
+                        name: 'OperatorMasterPegawai',
                       }"
                       class="nav-link">
                       Pegawai
@@ -58,7 +58,7 @@ import GlobalHeader from '../components/operator_header.vue';
                   <li class="nav-item">
                     <router-link
                       :to="{
-                        name: 'OperatorDashboard',
+                        name: 'OperatorMasterMahasiswa',
                       }"
                       class="nav-link">
                       Mahasiswa
@@ -67,7 +67,7 @@ import GlobalHeader from '../components/operator_header.vue';
                   <li class="nav-item">
                     <router-link
                       :to="{
-                        name: 'OperatorDashboard',
+                        name: 'OperatorMasterLainnya',
                       }"
                       class="nav-link">
                       Lainnya
@@ -175,7 +175,7 @@ import GlobalHeader from '../components/operator_header.vue';
                         <li class="nav-item">
                           <router-link
                             :to="{
-                              name: 'OperatorDashboard',
+                              name: 'OperatorMahasiswaPesan',
                             }"
                             class="nav-link">
                             Pesan Baru
@@ -184,7 +184,7 @@ import GlobalHeader from '../components/operator_header.vue';
                         <li class="nav-item">
                           <router-link
                             :to="{
-                              name: 'OperatorDashboard',
+                              name: 'OperatorMahasiswaGroup',
                             }"
                             class="nav-link">
                             Kirim Pesan Group
@@ -209,7 +209,7 @@ import GlobalHeader from '../components/operator_header.vue';
                         <li class="nav-item">
                           <router-link
                             :to="{
-                              name: 'OperatorDashboard',
+                              name: 'OperatorOrangtuaPesan',
                             }"
                             class="nav-link">
                             Pesan Baru
@@ -218,7 +218,7 @@ import GlobalHeader from '../components/operator_header.vue';
                         <li class="nav-item">
                           <router-link
                             :to="{
-                              name: 'OperatorDashboard',
+                              name: 'OperatorOrangtuaGroup',
                             }"
                             class="nav-link">
                             Kirim Pesan Group
@@ -243,7 +243,7 @@ import GlobalHeader from '../components/operator_header.vue';
                         <li class="nav-item">
                           <router-link
                             :to="{
-                              name: 'OperatorDashboard',
+                              name: 'OperatorDosenPesan',
                             }"
                             class="nav-link">
                             Pesan Baru
@@ -252,7 +252,7 @@ import GlobalHeader from '../components/operator_header.vue';
                         <li class="nav-item">
                           <router-link
                             :to="{
-                              name: 'OperatorDashboard',
+                              name: 'OperatorDosenGroup',
                             }"
                             class="nav-link">
                             Kirim Pesan Group
@@ -277,7 +277,7 @@ import GlobalHeader from '../components/operator_header.vue';
                         <li class="nav-item">
                           <router-link
                             :to="{
-                              name: 'OperatorDashboard',
+                              name: 'OperatorPegawaiPesan',
                             }"
                             class="nav-link">
                             Pesan Baru
@@ -286,7 +286,7 @@ import GlobalHeader from '../components/operator_header.vue';
                         <li class="nav-item">
                           <router-link
                             :to="{
-                              name: 'OperatorDashboard',
+                              name: 'OperatorPegawaiGroup',
                             }"
                             class="nav-link">
                             Kirim Pesan Group
@@ -311,7 +311,7 @@ import GlobalHeader from '../components/operator_header.vue';
                         <li class="nav-item">
                           <router-link
                             :to="{
-                              name: 'OperatorDashboard',
+                              name: 'OperatorLainnyaPesan',
                             }"
                             class="nav-link">
                             Pesan Baru
@@ -320,7 +320,7 @@ import GlobalHeader from '../components/operator_header.vue';
                         <li class="nav-item">
                           <router-link
                             :to="{
-                              name: 'OperatorPesanGroupLainnya',
+                              name: 'OperatorLainnyaGroup',
                             }"
                             class="nav-link">
                             Kirim Pesan Group
@@ -331,6 +331,16 @@ import GlobalHeader from '../components/operator_header.vue';
                   </li>
                 </ul>
               </div>
+            </li>
+            <li class="nav-item">
+              <router-link
+                :to="{
+                  name: 'OperatorReportPesan',
+                }"
+                class="nav-link menu-link">
+                <i class="ri-mail-check-line"></i>
+                Report Pesan
+              </router-link>
             </li>
           </ul>
         </div>

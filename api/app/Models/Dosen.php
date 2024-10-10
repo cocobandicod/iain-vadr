@@ -20,6 +20,7 @@ class Dosen extends Model
         'nidn',
         'nama_dosen',
         'no_hp',
+        'jabatan',
         'email',
     ];
 
